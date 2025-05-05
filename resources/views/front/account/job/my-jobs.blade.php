@@ -74,7 +74,7 @@
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li><a class="dropdown-item" href="job-detail.html"> <i class="fa fa-eye" aria-hidden="true"></i> View</a></li>
                                                     <li><a class="dropdown-item" href={{route('account.editJob', $job->id)  }} ><i class="fa fa-edit" aria-hidden="true"></i> Edit</a></li>
-                                                    <li><a class="dropdown-item" href="#"> <i class="fa fa-trash" aria-hidden="true"></i> Remove</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="deleteJob({{ $job->id }})"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -97,4 +97,33 @@
     </div>
 </section>
 
+@endsection
+
+@section('customJs')
+<script type="text/javascript">
+    function deleteJob(jobId) {
+        if (confirm("Are you sure you want to delete this job?")) {
+            alert("Job with ID " + jobId + " will be deleted.");
+            $.ajax({
+                url: '{{ route("account.deleteJob", ":jobId") }}'.replace(':jobId', jobId), // Correctly pass jobId in the URL
+                type: 'POST',
+                data: {
+                    jobId: jobId, 
+                    _token: '{{ csrf_token() }}'  // Add CSRF token to the data
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === true) {
+                        window.location.href = '{{ route('account.myJobs') }}'; // Redirect after success
+                    } else {
+                        alert("Error: " + response.message); // Handle error if job not found or another issue occurs
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("An error occurred: " + error); // Handle AJAX failure
+                }
+            });
+        }
+    }
+</script>
 @endsection

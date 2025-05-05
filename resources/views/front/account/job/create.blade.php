@@ -163,16 +163,14 @@
 @section('customJs')
 <script type="text/javascript">
     $("#createJobForm").submit(function(e) {
-        e.preventDefault(); // Prevent the default form submission
-        $("button")[type="submit"].prop('disabled', true); // Disable the button to prevent multiple submissions
-
+        e.preventDefault(); // Prevent the default form submission 
         $.ajax({
             url: '{{ route("account.saveJob") }}',
             type: 'POST',
             dataType: 'json',
             data: $("#createJobForm").serializeArray(), // Serialize the form data
             success: function(response) {
-                $("button")[type="submit"].prop('disabled', false); // Disable the button to prevent multiple submissions
+                
                 if (response.status === true) {
                     // Clear error highlights and feedback
                     $(".is-invalid").removeClass('is-invalid');
@@ -273,3 +271,4 @@
     });
 </script>
 @endsection
+ 

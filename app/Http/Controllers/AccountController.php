@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -191,8 +192,8 @@ class AccountController extends Controller
         // Define validation rules
         $rules = [
             'title' => 'required|min:5|max:200',
-            'category' => 'required',
-            'jobType' => 'required',
+            'category' => 'required|exists:categories,id', // Ensure category exists in the database
+            'jobType' => 'required|exists:job_types,id',   // Ensure job type exists in the database
             'vacancy' => 'required|integer',
             'location' => 'required|max:50',
             'description' => 'required',
@@ -221,7 +222,7 @@ class AccountController extends Controller
             $job->company_location = $request->company_location;
             $job->company_website = $request->company_website;
             $job->save();
-
+ 
             // Flash success message
             session()->flash('success', 'Job added successfully!');
 
@@ -247,7 +248,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function editJob(Request $request, $id)
+    public function editJob($id)
     {
         $categories = Category::orderBy('name', 'asc')->where('status', 1)->get();
         $jobTypes = JobType::orderBy('name', 'asc')->where('status', 1)->get();
@@ -331,4 +332,26 @@ class AccountController extends Controller
             ]);
         }
     }
-}
+
+    public function deleteJob(Request $request)
+    {
+        $job = Job::where([
+            'user_id' => Auth::user()->id,
+            'id' => $request->jobId
+        ])->first();
+    
+        if (!$job) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Job not found!'
+            ]);
+        }
+        
+        $job->delete();  // Delete the job
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'Job deleted successfully!'  // Add the message here
+        ]);
+    }
+}    

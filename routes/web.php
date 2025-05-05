@@ -37,6 +37,7 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/my-jobs', [AccountController::class, 'myJobs'])->name('account.myJobs'); // GET for viewing jobs
         Route::get('/my-jobs/edit/{jobId}', [AccountController::class, 'editJob'])->name('account.editJob'); // GET for viewing jobs
         Route::put('/update-job/{jobId}', [AccountController::class, 'updateJob'])->name('account.updateJob'); 
+        Route::post('/delete-job/{jobId}', [AccountController::class, 'deleteJob'])->name('account.deleteJob'); 
     });
 
 });
