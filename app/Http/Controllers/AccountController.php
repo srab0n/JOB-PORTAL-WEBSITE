@@ -331,4 +331,26 @@ class AccountController extends Controller
             ]);
         }
     }
+    public function deleteJob(Request $request)
+    {
+    $job = Job::where([
+        'user_id' => Auth::user()->id,
+        'id' => $request->jobId
+    ])->first();
+
+    if (!$job) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Job not found!'
+        ]);
+    }
+
+    $job->delete();  // Delete the job
+
+    session()->flash('success', 'Job deleted successfully!');  // Set the success message
+    return response()->json([
+        'status' => true
+    ]);
+}
+
 }
