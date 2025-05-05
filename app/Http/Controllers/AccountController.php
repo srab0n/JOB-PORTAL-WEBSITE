@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -222,7 +221,7 @@ class AccountController extends Controller
             $job->company_location = $request->company_location;
             $job->company_website = $request->company_website;
             $job->save();
- 
+
             // Flash success message
             session()->flash('success', 'Job added successfully!');
 
@@ -241,14 +240,14 @@ class AccountController extends Controller
 
     public function myJobs()
     {
-        $jobs = Job::where('user_id', Auth::user()->id)->with('jobType')->paginate(10);
+        $jobs = Job::where('user_id', Auth::user()->id)->with('jobType')->orderBy('created_at', 'DESC')->paginate(10);
 
         return view('front.account.job.my-jobs', [
             'jobs' => $jobs
         ]);
     }
 
-    public function editJob($id)
+    public function editJob(Request $request, $id)
     {
         $categories = Category::orderBy('name', 'asc')->where('status', 1)->get();
         $jobTypes = JobType::orderBy('name', 'asc')->where('status', 1)->get();
@@ -332,26 +331,4 @@ class AccountController extends Controller
             ]);
         }
     }
-
-    public function deleteJob(Request $request)
-    {
-        $job = Job::where([
-            'user_id' => Auth::user()->id,
-            'id' => $request->jobId
-        ])->first();
-    
-        if (!$job) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Job not found!'
-            ]);
-        }
-        
-        $job->delete();  // Delete the job
-    
-        return response()->json([
-            'status' => true,
-            'message' => 'Job deleted successfully!'  // Add the message here
-        ]);
-    }
-}    
+}
