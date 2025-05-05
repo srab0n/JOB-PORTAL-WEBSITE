@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\AdminController;
 
 // Home Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -36,7 +35,8 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/create-job', [AccountController::class, 'createJob'])->name('account.createJob'); // GET for the form
         Route::post('/save-job', [AccountController::class, 'saveJob'])->name('account.saveJob'); // POST for saving the job
         Route::get('/my-jobs', [AccountController::class, 'myJobs'])->name('account.myJobs'); // GET for viewing jobs
+        Route::get('/my-jobs/edit/{jobId}', [AccountController::class, 'editJob'])->name('account.editJob'); // GET for viewing jobs
+        Route::put('/update-job/{jobId}', [AccountController::class, 'updateJob'])->name('account.updateJob'); 
     });
 
 });
-

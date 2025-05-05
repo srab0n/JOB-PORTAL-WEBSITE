@@ -11,8 +11,6 @@ use App\Models\Category;
 use App\Models\JobType;
 use App\Models\Job;
 
-use function Symfony\Component\String\b;
-
 class AccountController extends Controller
 {
     // Show registration form
@@ -34,7 +32,7 @@ class AccountController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ]);
         }
 
@@ -209,7 +207,7 @@ class AccountController extends Controller
             $job->title = $request->title;
             $job->category_id = $request->category;
             $job->job_type_id = $request->jobType;
-            $job->user_id= Auth::user()->id; // Assuming the user is logged in
+            $job->user_id = Auth::user()->id; // Assuming the user is logged in
             $job->vacancy = $request->vacancy;
             $job->salary = $request->salary;
             $job->location = $request->location;
@@ -228,7 +226,7 @@ class AccountController extends Controller
             session()->flash('success', 'Job added successfully!');
 
             return response()->json([
-                'status' => True,
+                'status' => true,
                 'errors' => [],
             ]);
         } else {
@@ -242,9 +240,95 @@ class AccountController extends Controller
 
     public function myJobs()
     {
-        $jobs =Job::where('user_id', Auth::user()->id)->with('jobType')->paginate(10);
+        $jobs = Job::where('user_id', Auth::user()->id)->with('jobType')->paginate(10);
+
         return view('front.account.job.my-jobs', [
             'jobs' => $jobs
         ]);
+    }
+
+    public function editJob(Request $request, $id)
+    {
+        $categories = Category::orderBy('name', 'asc')->where('status', 1)->get();
+        $jobTypes = JobType::orderBy('name', 'asc')->where('status', 1)->get();
+
+        $job = Job::where([
+            'user_id' => Auth::user()->id,
+            'id' => $id
+        ])->first();
+
+        if ($job === null) {
+            abort(404);
+        }
+
+        return view('front.account.job.edit', [
+            'categories' => $categories,
+            'jobTypes' => $jobTypes,
+            'job' => $job
+        ]);
+    }
+
+    public function updateJob(Request $request, $id)
+    {
+        // Define validation rules
+        $rules = [
+            'title' => 'required|min:5|max:200',
+            'category' => 'required|integer|exists:categories,id', // Validate category is an integer and exists in the categories table
+            'jobType' => 'required|integer|exists:job_types,id',   // Validate job type is an integer and exists in the job_types table
+            'vacancy' => 'required|integer',
+            'location' => 'required|max:50',
+            'description' => 'required',
+            'company_name' => 'required|min:3|max:75',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        // If validation passes
+        if ($validator->passes()) {
+            $job = Job::find($id);
+
+            // Check if the job exists
+            if (!$job) {
+                return response()->json([
+                    'status' => false,
+                    'errors' => ['job' => ['Job not found!']]
+                ]);
+            }
+
+            // Update the job
+            $job->title = $request->title;
+            $job->category_id = $request->category; // Assign the category_id
+            $job->job_type_id = $request->jobType; // Assign the job_type_id
+            $job->user_id = Auth::user()->id; // Assuming the user is logged in
+            $job->vacancy = $request->vacancy;
+            $job->salary = $request->salary;
+            $job->location = $request->location;
+            $job->description = $request->description;
+            $job->benefits = $request->benefits;
+            $job->responsibility = $request->responsibility;
+            $job->qualifications = $request->qualifications;
+            $job->keywords = $request->keywords;
+            $job->experience = $request->experience;
+            $job->company_name = $request->company_name;
+            $job->company_location = $request->company_location;
+            $job->company_website = $request->company_website;
+
+            // Save the job to the database
+            $job->save();
+
+            // Flash success message
+            session()->flash('success', 'Job Updated Successfully!');
+
+            return response()->json([
+                'status' => true,
+                'errors' => [],
+            ]);
+        } else {
+            // If validation fails, return errors
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
     }
 }
