@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'image',
+        'designation',
+        'mobile',
+        'user_type',
     ];
 
     /**
@@ -42,4 +46,30 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the admin record associated with the user.
+     */
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Create admin record when user is created
+        static::created(function ($user) {
+            if ($user->user_type === 'admin') {
+                Admin::create([
+                    'user_id' => $user->id,
+                    'role' => 'admin'
+                ]);
+            }
+        });
+    }
 }

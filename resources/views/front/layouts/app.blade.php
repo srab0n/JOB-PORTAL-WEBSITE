@@ -28,8 +28,13 @@
 						<a class="nav-link" aria-current="page" href="{{ route('home') }}">Home</a>
 					</li>	
 					<li class="nav-item">
-						<a class="nav-link" aria-current="page" href="jobs.html">Find Jobs</a>
-					</li>										
+						<a class="nav-link" aria-current="page" href="{{ route('jobs') }}">Find Jobs</a>
+					</li>
+                    @if (Auth::check() && in_array(Auth::user()->user_type, ['admin', 'employer']))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('account.myJobs') }}">My Jobs</a>
+                    </li>
+                    @endif										
 				</ul>				
 
 				@if (!Auth::check())
@@ -43,7 +48,11 @@
 				  @endif
                 @endif
 
-				<a class="btn btn-primary" href="post-job.html" type="submit">Post a Job</a>
+                @if (Auth::check() && in_array(Auth::user()->user_type, ['admin', 'employer']))
+                    <a class="btn btn-primary" href="{{ route('account.createJob') }}" type="submit">Post a Job</a>
+                @else
+                    <a class="btn btn-primary" href="{{ route('account.profile') }}" type="submit" onclick="showUnauthorizedMessage()">Post a Job</a>
+                @endif
 			</div>
 		</div>
 	</nav>
@@ -84,6 +93,13 @@
 <script src="{{ asset('assets/js/instantpages.5.1.0.min.js') }}"></script>
 {{-- the above four lines are directed from asset --}}
 <script src="{{ asset('assets/js/custom.js') }}"></script>
+
+<script>
+function showUnauthorizedMessage() {
+    event.preventDefault();
+    alert('Only employers and administrators can post jobs. Please contact the administrator if you need this access.');
+}
+</script>
 
 @yield('customJs')
 </body>

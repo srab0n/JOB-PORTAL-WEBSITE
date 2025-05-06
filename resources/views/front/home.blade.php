@@ -8,7 +8,7 @@
             <div class="col-12 col-xl-8">
                 <h1>Find your dream job</h1>
                 <p>Thousands of jobs available!</p>
-                <div class="banner-btn mt-5"><a href="#" class="btn btn-primary mb-4 mb-sm-0">Explore Now</a></div>
+                <div class="banner-btn mt-5"><a href="{{ url('/jobs') }}" class="btn btn-primary mb-4 mb-sm-0">Explore Now</a></div>
             </div>
         </div>
     </div>
@@ -36,9 +36,8 @@
                 
                 <div class=" col-md-3 mb-xs-3 mb-sm-3 mb-lg-0">
                     <div class="d-grid gap-2">
-                        <a href="jobs.html" class="btn btn-primary btn-block">Search</a>
+                        <a href="{{ route('jobs') }}" class="btn btn-primary btn-block">Search</a>
                     </div>
-                    
                 </div>
             </div>            
         </div>

@@ -3,9 +3,10 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Category;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Category>
  */
 class CategoryFactory extends Factory
 {
@@ -16,8 +17,27 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
+        $categories = [
+            'Information Technology',
+            'Healthcare',
+            'Finance',
+            'Education',
+            'Marketing',
+            'Engineering',
+            'Sales',
+            'Customer Service',
+            'Design',
+            'Human Resources',
+            'Legal',
+            'Manufacturing',
+            'Retail',
+            'Transportation',
+            'Construction'
+        ];
+
         return [
-            'name'=> fake()->name()
+            'name' => $this->faker->unique()->randomElement($categories),
+            'status' => 1
         ];
     }
 }
