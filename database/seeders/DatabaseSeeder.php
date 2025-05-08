@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
             CategoryAndJobTypeSeeder::class,
+            JobSeeder::class,
         ]);
 
         \App\Models\Category::factory(5)->create();
