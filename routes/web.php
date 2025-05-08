@@ -6,6 +6,8 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
+use App\Http\Controllers\Employer\EmployerController;
 
 // Home Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -66,4 +68,18 @@ Route::group(['prefix' => 'account'], function () {
         });
     });
 
+});
+
+// Employer Dashboard Routes
+Route::middleware(['auth', 'employer'])->prefix('employer')->name('employer.')->group(function () {
+    Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/update-company-info', [EmployerController::class, 'updateCompanyInfo'])->name('updateCompanyInfo');
+    
+    // Job Management Routes
+    Route::get('/jobs/create', [EmployerDashboardController::class, 'createJob'])->name('jobs.create');
+    Route::post('/jobs', [EmployerDashboardController::class, 'storeJob'])->name('jobs.store');
+    Route::get('/jobs/{job}/edit', [EmployerDashboardController::class, 'editJob'])->name('jobs.edit');
+    Route::put('/jobs/{job}', [EmployerDashboardController::class, 'updateJob'])->name('jobs.update');
+    Route::delete('/jobs/{job}', [EmployerDashboardController::class, 'deleteJob'])->name('jobs.delete');
+    Route::get('/jobs/{job}/applicants', [EmployerDashboardController::class, 'viewApplicants'])->name('jobs.applicants');
 });

@@ -104,7 +104,7 @@
                                     </div>
 
                                     <div class="d-grid mt-3">
-                                        <a href="job-detail.html" class="btn btn-primary btn-lg" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 4px 8px rgba(0,123,255,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Details</a>
+                                        <a href="{{ route('jobs.detail', $job->id) }}" class="btn btn-primary btn-lg" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 4px 8px rgba(0,123,255,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Details</a>
                                     </div>
                                 </div>
                             </div>

@@ -24,7 +24,7 @@ class JobsController extends Controller
 
     public function detail($id){
         $job = Job::with(['jobType', 'category', 'user'])->findOrFail($id);
-        return view('front.job-details', [
+        return view('front.job-detail', [
             'job' => $job
         ]);
     }

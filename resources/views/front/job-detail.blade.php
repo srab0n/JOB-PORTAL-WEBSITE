@@ -56,12 +56,12 @@
 
                         <div class="mb-4">
                             <h4>Requirements</h4>
-                            <p>{{ $job->requirements }}</p>
+                            <p>{{ $job->qualifications }}</p>
                         </div>
 
                         <div class="mb-4">
                             <h4>Responsibilities</h4>
-                            <p>{{ $job->responsibilities }}</p>
+                            <p>{{ $job->responsibility }}</p>
                         </div>
 
                         <div class="mb-4">

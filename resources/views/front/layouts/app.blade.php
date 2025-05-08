@@ -26,15 +26,7 @@
 				<ul class="navbar-nav ms-0 ms-sm-0 me-auto mb-2 mb-lg-0 ms-lg-4">
 					<li class="nav-item">
 						<a class="nav-link" aria-current="page" href="{{ route('home') }}">Home</a>
-					</li>	
-					<li class="nav-item">
-						<a class="nav-link" aria-current="page" href="{{ route('jobs') }}">Find Jobs</a>
-					</li>
-                    @if (Auth::check() && in_array(Auth::user()->user_type, ['admin', 'employer']))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('account.myJobs') }}">My Jobs</a>
-                    </li>
-                    @endif										
+					</li>										
 				</ul>				
 
 				@if (!Auth::check())
@@ -45,6 +37,11 @@
 				  {{-- Add Admin Button if user_type is admin --}}
 				  @if(auth()->user()->user_type === 'admin')
 					<a href="{{ route('admin.dashboard') }}" class="btn btn-warning me-2">Admin</a>
+				  @endif
+
+				  {{-- Add Employer Button if user_type is employer --}}
+				  @if(auth()->user()->user_type === 'employer')
+					<a href="{{ route('employer.dashboard') }}" class="btn btn-info me-2">Employer</a>
 				  @endif
                 @endif
 
