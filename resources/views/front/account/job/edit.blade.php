@@ -38,7 +38,7 @@
                                     @isset($categories)
                                         @if ($categories->isNotEmpty())
                                             @foreach ($categories as $category)
-                                                <option {{ $job->category_id==$category->id ? 'selected' : ''}}value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option {{ $job->category_id == $category->id ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
                                         @else
                                             <option value="">No categories available</option>
@@ -57,7 +57,7 @@
                                     @isset($jobTypes)
                                         @if ($jobTypes->isNotEmpty())
                                             @foreach ($jobTypes as $jobType)
-                                                <option{{ $job->job_type_id==$jobType->id ? 'selected' : ''}} value="{{ $jobType->id }}">{{ $jobType->name }}</option>
+                                                <option {{ $job->job_type_id == $jobType->id ? 'selected' : '' }} value="{{ $jobType->id }}">{{ $jobType->name }}</option>
                                             @endforeach
                                         @else
                                             <option value="">No job types available</option>
@@ -164,116 +164,39 @@
 @section('customJs')
 <script type="text/javascript">
     $("#editJobForm").submit(function(e) {
-        e.preventDefault(); // Prevent the default form submission
-        $("button[type='submit']").prop('disabled', true); // Corrected syntax
+        e.preventDefault();
+        $("button[type='submit']").prop('disabled', true);
 
         $.ajax({
             url: '{{ route("account.updateJob", $job->id) }}',
             type: 'PUT',
             dataType: 'json',
-            data: $("#editJobForm").serializeArray().map(function(field) {
-                if (field.name === 'category' || field.name === 'jobType' || field.name === 'experience') {
-                    field.value = parseInt(field.value) || null; // Convert to integer or set to null if invalid
-                }
-                return field;
-            }),
+            data: $("#editJobForm").serializeArray(),
             success: function(response) {
-                $("button[type='submit']").prop('disabled', false); // Corrected syntax
+                $("button[type='submit']").prop('disabled', false);
+                
                 if (response.status === true) {
-                    // Clear error highlights and feedback
-                    $(".is-invalid").removeClass('is-invalid');
-                    $(".invalid-feedback").html('');
-
-                    // Redirect to myJobs page after success
                     window.location.href = '{{ route('account.myJobs') }}';
                 } else {
                     var errors = response.errors;
-
-                    // Loop through the errors and apply them to each corresponding field
-                    if (errors.title) {
-                        $("#title").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.title);
-                    } else {
-                        $("#title").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    if (errors.category) {
-                        $("#category").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.category);
-                    } else {
-                        $("#category").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    if (errors.jobType) {
-                        $("#jobType").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.jobType);
-                    } else {
-                        $("#jobType").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    if (errors.vacancy) {
-                        $("#vacancy").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.vacancy);
-                    } else {
-                        $("#vacancy").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    if (errors.location) {
-                        $("#location").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.location);
-                    } else {
-                        $("#location").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    if (errors.description) {
-                        $("#description").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.description);
-                    } else {
-                        $("#description").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    if (errors.company_name) {
-                        $("#company_name").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.company_name);
-                    } else {
-                        $("#company_name").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
+                    
+                    // Reset all fields
+                    $(".is-invalid").removeClass('is-invalid');
+                    $(".invalid-feedback").remove();
+                    
+                    // Handle each error
+                    $.each(errors, function(field, messages) {
+                        var input = $("#" + field);
+                        input.addClass('is-invalid');
+                        $.each(messages, function(index, message) {
+                            input.after('<div class="invalid-feedback">' + message + '</div>');
+                        });
+                    });
                 }
+            },
+            error: function(xhr, status, error) {
+                $("button[type='submit']").prop('disabled', false);
+                alert("An error occurred while updating the job. Please try again.");
             }
         });
     });
