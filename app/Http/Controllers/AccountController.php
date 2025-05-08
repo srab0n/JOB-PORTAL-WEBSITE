@@ -353,4 +353,22 @@ class AccountController extends Controller
     ]);
 }
 
+    public function deleteAccount()
+    {
+        $user = Auth::user();
+        
+        // Delete all jobs associated with the user
+        Job::where('user_id', $user->id)->delete();
+        
+        // Delete the user
+        $user->delete();
+        
+        // Logout the user
+        Auth::logout();
+        
+        return response()->json([
+            'status' => true,
+            'message' => 'Account deleted successfully'
+        ]);
+    }
 }

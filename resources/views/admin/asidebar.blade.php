@@ -13,8 +13,8 @@
                 <a href="#">Job applications</a>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                <a href="{{ route('account.logout') }}">Logout</a>
-            </li>                                                        
+               <a href="{{ route('account.logout') }}" style="font-weight: bold; color: #dc3545;">Logout</a>
+            </li>                                                                                                                
         </ul>
     </div>
 </div>

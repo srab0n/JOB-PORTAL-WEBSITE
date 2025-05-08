@@ -1,0 +1,122 @@
+/* Header Styles */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+nav ul li a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+nav ul li a:hover, nav ul li a:focus {
+    transform: scale(1.08) translateY(-2px) skewX(-2deg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+nav ul li a.active {
+    color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Job Card Hover Effects */
+.card {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+.card:hover {
+    transform: scale(1.04) translateY(-8px) rotate(0.5deg);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.card .btn-primary {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+.card .btn-primary:hover {
+    transform: scale(1.08) translateY(-3px) rotate(-1deg);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10);
+}
+
+/* Category Card Hover Effects */
+.single_catagory {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.single_catagory:hover {
+    transform: scale(1.04) translateY(-8px) rotate(0.5deg);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+    background: #f8f9fa;
+}
+
+.single_catagory h4 {
+    transition: all 0.3s ease;
+}
+
+.single_catagory:hover h4 {
+    color: #007bff;
+}
+
+/* Search Button Hover Effect */
+.btn-primary {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+.btn-primary:hover {
+    transform: scale(1.08) translateY(-3px) rotate(-1deg);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10);
+}
+
+/* Search Form Input Hover Effects */
+.form-control {
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    border-color: #007bff;
+}
+
+/* Eye-catching hover effects without color change */
+
+/* Buttons */
+.btn, .btn-primary, .btn-outline-primary, .btn-warning {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+.btn:hover, .btn:focus,
+.btn-primary:hover, .btn-primary:focus,
+.btn-outline-primary:hover, .btn-outline-primary:focus,
+.btn-warning:hover, .btn-warning:focus {
+    transform: scale(1.08) translateY(-3px) rotate(-1deg);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10);
+}
+
+/* Cards */
+.card, .single_catagory {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+.card:hover, .single_catagory:hover {
+    transform: scale(1.04) translateY(-8px) rotate(0.5deg);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+}
+
+/* Navigation Links */
+nav ul li a {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
+}
+nav ul li a:hover, nav ul li a:focus {
+    transform: scale(1.08) translateY(-2px) skewX(-2deg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+} 

@@ -22,6 +22,22 @@
                             <p> </p>
                         </div> 
                         <div class="mb-3">
+                            <label class="mb-2">Register as*</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="user_type" id="aspirant" value="aspirant" checked>
+                                <label class="form-check-label" for="aspirant">
+                                    Aspirant
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="user_type" id="employer" value="employer">
+                                <label class="form-check-label" for="employer">
+                                    Employer
+                                </label>
+                            </div>
+                            <p> </p>
+                        </div>
+                        <div class="mb-3">
                             <label for="password" class="mb-2">Password*</label>
                             <input type="password" name="password" id="password" class="form-control" placeholder="Enter Password">
                             <p> </p>
@@ -115,6 +131,21 @@
                     } else {
                         $("#confirm_password").removeClass('is-invalid')
                             .siblings('p')
+                            .removeClass('invalid-feedback')
+                            .html('');
+                    }
+
+                    // Handle user type errors
+                    if (errors.user_type) {
+                        $("input[name='user_type']").addClass('is-invalid')
+                            .closest('.mb-3')
+                            .find('p')
+                            .addClass('invalid-feedback')
+                            .html(errors.user_type);
+                    } else {
+                        $("input[name='user_type']").removeClass('is-invalid')
+                            .closest('.mb-3')
+                            .find('p')
                             .removeClass('invalid-feedback')
                             .html('');
                     }

@@ -89,6 +89,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="addCategoryForm">
+                @csrf
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="categoryName" class="form-label">Category Name</label>
@@ -108,22 +109,35 @@
 
 @section('customJs')
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $("#addCategoryForm").submit(function(e) {
         e.preventDefault();
+        $("#categoryError").html('');
+        
         $.ajax({
             url: '{{ route("admin.store_category") }}',
             type: 'POST',
-            data: $(this).serializeArray(),
+            data: $(this).serialize(),
             dataType: 'json',
             success: function(response) {
                 if (response.status === true) {
                     window.location.reload();
                 } else {
-                    var errors = response.errors;
-                    if (errors.name) {
-                        $("#categoryError").html(errors.name[0]);
+                    if (response.errors && response.errors.name) {
+                        $("#categoryError").html(response.errors.name[0]);
+                    } else if (response.message) {
+                        alert(response.message);
                     }
                 }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred. Please try again.');
+                console.error(xhr.responseText);
             }
         });
     });
@@ -141,8 +155,12 @@
                     if (response.status === true) {
                         window.location.reload();
                     } else {
-                        alert(response.message);
+                        alert(response.message || 'Error deleting category');
                     }
+                },
+                error: function(xhr, status, error) {
+                    alert('An error occurred while deleting the category. Please try again.');
+                    console.error(xhr.responseText);
                 }
             });
         }

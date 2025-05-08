@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\AdminController;
 // Home Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs');
+Route::get('/jobs/search', [JobsController::class, 'search'])->name('jobs.search');
+Route::get('/jobs/{job}', [JobsController::class, 'detail'])->name('jobs.detail');
 
 
 // Admin Routes
@@ -51,6 +53,7 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/logout', [AccountController::class, 'logout'])->name('account.logout');
         Route::put('/update-profile', [AccountController::class, 'updateProfile'])->name('account.updateProfile');
         Route::put('/update-password', [AccountController::class, 'updatePassword'])->name('account.updatePassword');
+        Route::delete('/delete-account', [AccountController::class, 'deleteAccount'])->name('account.deleteAccount');
         
         // Job-related routes with jobCreation middleware
         Route::group(['middleware' => 'jobCreation'], function () {

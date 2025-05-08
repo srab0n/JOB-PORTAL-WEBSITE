@@ -32,12 +32,16 @@ class CategoryAndJobTypeSeeder extends Seeder
             'Construction'
         ];
 
+        // Add categories only if they don't exist
         foreach ($categories as $category) {
-            Category::create([
-                'name' => $category,
-                'status' => 1
-            ]);
+            Category::firstOrCreate(
+                ['name' => $category],
+                ['status' => 1]
+            );
         }
+
+        // Delete any categories not in our list
+        Category::whereNotIn('name', $categories)->delete();
 
         // Create job types
         $jobTypes = [
@@ -51,11 +55,15 @@ class CategoryAndJobTypeSeeder extends Seeder
             'Work From Home'
         ];
 
+        // Add job types only if they don't exist
         foreach ($jobTypes as $jobType) {
-            JobType::create([
-                'name' => $jobType,
-                'status' => 1
-            ]);
+            JobType::firstOrCreate(
+                ['name' => $jobType],
+                ['status' => 1]
+            );
         }
+
+        // Delete any job types not in our list
+        JobType::whereNotIn('name', $jobTypes)->delete();
     }
 } 

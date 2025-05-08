@@ -20,20 +20,20 @@
 
         <div class="row pt-5">
             <div class="col-md-4 col-lg-3 sidebar mb-4">
-                <div class="card border-0 shadow p-4">
+                <div class="card border-0 shadow p-4" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';">
                     <div class="mb-4">
                         <h2>Keywords</h2>
-                        <input type="text" placeholder="Keywords" class="form-control">
+                        <input type="text" placeholder="Keywords" class="form-control" style="transition: all 0.3s ease;" onfocus="this.style.boxShadow='0 0 0 0.2rem rgba(0,123,255,0.25)'; this.style.borderColor='#007bff';" onblur="this.style.boxShadow='none'; this.style.borderColor='#ced4da';">
                     </div>
 
                     <div class="mb-4">
                         <h2>Location</h2>
-                        <input type="text" placeholder="Location" class="form-control">
+                        <input type="text" placeholder="Location" class="form-control" style="transition: all 0.3s ease;" onfocus="this.style.boxShadow='0 0 0 0.2rem rgba(0,123,255,0.25)'; this.style.borderColor='#007bff';" onblur="this.style.boxShadow='none'; this.style.borderColor='#ced4da';">
                     </div>
 
                     <div class="mb-4">
                         <h2>Category</h2>
-                        <select name="category" id="category" class="form-control">
+                        <select name="category" id="category" class="form-control" style="transition: all 0.3s ease;" onfocus="this.style.boxShadow='0 0 0 0.2rem rgba(0,123,255,0.25)'; this.style.borderColor='#007bff';" onblur="this.style.boxShadow='none'; this.style.borderColor='#ced4da';">
                             <option value="">Select a Category</option>
                             @if(isset($categories) && $categories->isNotEmpty())
                                @foreach($categories as $category)
@@ -82,7 +82,7 @@
                         @if($jobs->isNotEmpty())
                            @foreach($jobs as $job)
                            <div class="col-md-4">
-                            <div class="card border-0 p-3 shadow mb-4">
+                            <div class="card border-0 p-3 shadow mb-4" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';">
                                 <div class="card-body">
                                     <h3 class="border-0 fs-5 pb-2 mb-0">{{ $job->title }}</h3>
                                     <p>{{ Str::words($job->description, $words=10, '...') }}</p>
@@ -104,7 +104,7 @@
                                     </div>
 
                                     <div class="d-grid mt-3">
-                                        <a href="job-detail.html" class="btn btn-primary btn-lg">Details</a>
+                                        <a href="job-detail.html" class="btn btn-primary btn-lg" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 4px 8px rgba(0,123,255,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Details</a>
                                     </div>
                                 </div>
                             </div>

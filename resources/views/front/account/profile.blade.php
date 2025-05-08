@@ -81,6 +81,15 @@
                         </div>
                     </form>
                 </div>
+
+                {{-- Delete Account Section --}}
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="fs-4 mb-1 text-danger">Delete Account</h3>
+                        <p class="text-danger mb-4">Warning: This action cannot be undone. All your data will be permanently deleted.</p>
+                        <button type="button" class="btn btn-danger" id="deleteAccountBtn">Delete My Account</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -193,6 +202,28 @@
                 }
             }
         });
+    });
+
+    // Delete Account
+    $("#deleteAccountBtn").click(function() {
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+            $.ajax({
+                url: '{{ route("account.deleteAccount") }}',
+                type: 'DELETE',
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.status == true) {
+                        alert('Your account has been deleted successfully.');
+                        window.location.href = '{{ route('home') }}';
+                    } else {
+                        alert('Something went wrong. Please try again.');
+                    }
+                }
+            });
+        }
     });
 </script>
 @endsection
