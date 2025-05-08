@@ -108,8 +108,8 @@
                                         <p>Experience:{{ $job->experience  }}</p> --}}
                                         @if (!is_null($job->salary))
                                         <p class="mb-0">
-                                            <span class="fw-bolder"><i class="fa fa-usd"></i></span>
-                                            <span class="ps-1">{{ $job->salary }}</span>
+                                            <span class="fw-bolder">৳</span>
+                                            <span class="ps-1">{{ number_format((float) $job->salary) }}</span>
                                         </p>
                                         @endif
                                     </div>

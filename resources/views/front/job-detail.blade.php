@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <p class="mb-0">
-                                        <span class="fw-bolder"><i class="fa fa-usd"></i></span>
+                                        <span class="fw-bolder">৳</span>
                                         <span class="ps-1">{{ number_format($job->salary) }}</span>
                                     </p>
                                 </div>
