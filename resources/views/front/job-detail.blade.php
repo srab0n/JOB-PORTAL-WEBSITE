@@ -71,7 +71,15 @@
 
                         <div class="mb-4">
                             <h4>Company Information</h4>
-                            <p>{{ $job->company_description }}</p>
+                            <p><strong>Name:</strong> {{ $job->company_name }}</p>
+                            <p><strong>Website:</strong> 
+                                @if($job->company_website)
+                                    <a href="{{ $job->company_website }}" target="_blank">{{ $job->company_website }}</a>
+                                @else
+                                    Not set
+                                @endif
+                            </p>
+                            <p><strong>Location:</strong> {{ $job->company_location ?? 'Not set' }}</p>
                         </div>
 
                         @if(auth()->check() && !auth()->user()->is_admin)

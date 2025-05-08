@@ -104,7 +104,7 @@
                                                                 </p>
                                                                 <p class="mb-0">
                                                                     <span class="fw-bolder"><i class="fa fa-usd"></i></span>
-                                                                    <span class="ps-1">{{ number_format($featuredJob->salary) }}</span>
+                                                                    <span class="ps-1">{{ number_format((float) $featuredJob->salary) }}</span>
                                                                 </p>
                                                             </div>
                                                             <div class="d-grid mt-3">
@@ -166,7 +166,7 @@
                                                 @if (!is_null($latestjob->salary))
                                                     <p class="mb-0">
                                                         <span class="fw-bolder"><i class="fa fa-usd"></i></span>
-                                                        <span class="ps-1">{{ number_format($latestjob->salary) }}</span>
+                                                        <span class="ps-1">{{ number_format((float) $latestjob->salary) }}</span>
                                                     </p>
                                                 @endif
                                             </div>
