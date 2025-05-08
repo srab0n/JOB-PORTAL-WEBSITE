@@ -12,8 +12,10 @@ class HomeController extends Controller
         $categories = Category::where('status', 1)->orderBy('name','ASC')->take(8)->get();
 
         // Get top 5 highest paying jobs
-        $featuredJobs = Job::with('jobType')
-                   ->orderByDesc('salary')
+        $topPaidJobs = Job::with('jobType')
+                   ->whereNotNull('salary')
+                   ->where('salary', '!=', '')
+                   ->orderByRaw('CAST(salary AS DECIMAL(10,2)) DESC')
                    ->take(5)
                    ->get();
         
@@ -25,7 +27,7 @@ class HomeController extends Controller
 
         return view('front.home',[
            'categories' => $categories,
-           'featuredJobs' => $featuredJobs,
+           'topPaidJobs' => $topPaidJobs,
            'latestJobs' => $latestJobs
         ]);
     }

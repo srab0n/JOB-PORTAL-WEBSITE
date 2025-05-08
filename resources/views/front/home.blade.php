@@ -65,8 +65,12 @@
             @foreach ($categories as $category) 
             <div class="col-lg-4 col-xl-3 col-md-6">
                 <div class="single_catagory" style="transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1); padding: 20px; border-radius: 8px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" onmouseover="this.style.transform='scale(1.04) translateY(-8px) rotate(0.5deg)';this.style.boxShadow='0 12px 36px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)';">
-                    <a href="jobs.html"><h4 class="pb-2">{{ $category->name }}</h4></a>
-                    <p class="mb-0"> <span>0</span> Available position</p>
+                    <a href="{{ route('jobs.search', ['category' => $category->id]) }}">
+                        <h4 class="pb-2">{{ $category->name }}</h4>
+                    </a>
+                    <p class="mb-0">
+                        <span>{{ $category->jobs()->where('status', 1)->count() }}</span> Available position
+                    </p>
                 </div>
             </div>
             @endforeach
@@ -85,30 +89,30 @@
                         <div class="col-12">
                             <div id="featuredJobsCarousel" class="carousel slide" data-bs-ride="carousel">
                                 <div class="carousel-inner">
-                                    @foreach($featuredJobs as $key => $featuredJob)
+                                    @foreach($topPaidJobs as $key => $job)
                                         <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                             <div class="row justify-content-center">
                                                 <div class="col-md-8">
                                                     <div class="card border-0 p-3 shadow mb-4" style="transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);" onmouseover="this.style.transform='scale(1.04) translateY(-8px) rotate(0.5deg)';this.style.boxShadow='0 12px 36px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)';" onmouseout="this.style.transform='none';this.style.boxShadow='none';">
                                                         <div class="card-body">
-                                                            <h3 class="border-0 fs-5 pb-2 mb-0">{{ $featuredJob->title }}</h3>
-                                                            <p>{{ Str::words($featuredJob->description, 5) }}.</p>
+                                                            <h3 class="border-0 fs-5 pb-2 mb-0">{{ $job->title }}</h3>
+                                                            <p>{{ Str::words($job->description, 5) }}.</p>
                                                             <div class="bg-light p-3 border">
                                                                 <p class="mb-0">
                                                                     <span class="fw-bolder"><i class="fa fa-map-marker"></i></span>
-                                                                    <span class="ps-1">{{ $featuredJob->location }}</span>
+                                                                    <span class="ps-1">{{ $job->location }}</span>
                                                                 </p>
                                                                 <p class="mb-0">
                                                                     <span class="fw-bolder"><i class="fa fa-clock-o"></i></span>
-                                                                    <span class="ps-1">{{ $featuredJob->jobType->name }}</span>
+                                                                    <span class="ps-1">{{ $job->jobType->name }}</span>
                                                                 </p>
                                                                 <p class="mb-0">
-                                                                    <span class="fw-bolder"><i class="fa fa-usd"></i></span>
-                                                                    <span class="ps-1">{{ number_format((float) $featuredJob->salary) }}</span>
+                                                                    <span class="fw-bolder">৳</span>
+                                                                    <span class="ps-1">{{ number_format((float) $job->salary) }}</span>
                                                                 </p>
                                                             </div>
                                                             <div class="d-grid mt-3">
-                                                                <a href="{{ route('jobs.detail', $featuredJob->id) }}" class="btn btn-primary btn-lg" style="transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);" onmouseover="this.style.transform='scale(1.08) translateY(-3px) rotate(-1deg)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10)';" onmouseout="this.style.transform='none';this.style.boxShadow='none';">Details</a>
+                                                                <a href="{{ route('jobs.detail', $job->id) }}" class="btn btn-primary btn-lg" style="transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);" onmouseover="this.style.transform='scale(1.08) translateY(-3px) rotate(-1deg)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10)';" onmouseout="this.style.transform='none';this.style.boxShadow='none';">Details</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -126,7 +130,7 @@
                                     <span class="visually-hidden">Next</span>
                                 </button>
                                 <div class="carousel-indicators">
-                                    @foreach($featuredJobs as $key => $job)
+                                    @foreach($topPaidJobs as $key => $job)
                                         <button type="button" data-bs-target="#featuredJobsCarousel" data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}" aria-current="{{ $key == 0 ? 'true' : 'false' }}" aria-label="Slide {{ $key + 1 }}"></button>
                                     @endforeach
                                 </div>
@@ -165,7 +169,7 @@
                                                 </p>
                                                 @if (!is_null($latestjob->salary))
                                                     <p class="mb-0">
-                                                        <span class="fw-bolder"><i class="fa fa-usd"></i></span>
+                                                        <span class="fw-bolder">৳</span>
                                                         <span class="ps-1">{{ number_format((float) $latestjob->salary) }}</span>
                                                     </p>
                                                 @endif
