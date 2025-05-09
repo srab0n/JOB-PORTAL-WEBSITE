@@ -46,6 +46,11 @@
                                 <label for="mobile" class="mb-2">Mobile</label>
                                 <input type="text" name="mobile" id="mobile" placeholder="Mobile" class="form-control" value="{{ $user->mobile }}">
                             </div>
+                            <div class="mb-4">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Change Profile Picture
+                                </button>
+                            </div>
                         </div>
                         <div class="card-footer p-4">
                             <button type="submit" class="btn btn-primary">Update</button>
@@ -224,6 +229,66 @@
                 }
             });
         }
+    });
+</script>
+
+<!-- Profile Picture Upload Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Profile Picture</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="profilePictureForm" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Select Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <p class="invalid-feedback"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Profile Picture Upload Form
+    $("#profilePictureForm").submit(function(e) {
+        e.preventDefault();
+        
+        var formData = new FormData(this);
+        
+        $.ajax({
+            url: '{{ route("account.updateProfilePicture") }}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.status == true) {
+                    alert('Profile picture updated successfully.');
+                    window.location.reload();
+                } else {
+                    var errors = response.errors;
+                    if (errors.image) {
+                        $("#image").addClass('is-invalid')
+                            .siblings('p')
+                            .addClass('invalid-feedback')
+                            .html(errors.image);
+                    }
+                }
+            }
+        });
     });
 </script>
 @endsection

@@ -141,6 +141,43 @@ class AccountController extends Controller
         ]);
     }
 
+    public function updateProfilePicture(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        $user = Auth::user();
+
+        // Delete old image if exists
+        if ($user->image && file_exists(public_path('profile/' . $user->image))) {
+            unlink(public_path('profile/' . $user->image));
+        }
+
+        // Upload new image
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        
+        // Move the image to public/profile directory
+        $image->move(public_path('profile'), $imageName);
+
+        // Update user profile
+        $user->image = $imageName;
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Profile picture updated successfully'
+        ]);
+    }
+
     public function updatePassword(Request $request)
     {
         $user = Auth::user();
