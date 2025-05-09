@@ -2,7 +2,7 @@
 <html class="no-js" lang="en_AU" />
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>CareerVibe | Find Best Jobs</title>
+	<title>Hirely | Find Best Jobs</title>
 	<meta name="description" content="" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no" />
 	<meta name="HandheldFriendly" content="True" />
@@ -18,7 +18,7 @@
 <header>
 	<nav class="navbar navbar-expand-lg navbar-light bg-white shadow py-3">
 		<div class="container">
-			<a class="navbar-brand" href="index.html">CareerVibe</a>
+			<a class="navbar-brand" href="index.html">Hirely</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -43,6 +43,48 @@
 				  @if(auth()->user()->user_type === 'employer')
 					<a href="{{ route('employer.dashboard') }}" class="btn btn-info me-2">Employer</a>
 				  @endif
+
+                  {{-- Add notification bell for aspirant --}}
+                  @if(auth()->user()->user_type === 'aspirant')
+                    <div class="dropdown d-inline me-2">
+                        <button class="btn btn-link position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell fa-lg"></i>
+                            @if(isset($unreadNotifications) && $unreadNotifications > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $unreadNotifications }}
+                                </span>
+                            @endif
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="width: 300px;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                <span>Notifications</span>
+                                @if(isset($unreadNotifications) && $unreadNotifications > 0)
+                                    <a href="#" id="markAllAsReadAspirant" class="text-decoration-none">
+                                        Mark all as read
+                                    </a>
+                                @endif
+                            </li>
+                            @if(isset($notifications) && count($notifications) > 0)
+                                @foreach($notifications as $notification)
+                                    <li>
+                                        <a class="dropdown-item {{ $notification->is_read ? '' : 'bg-light' }}" 
+                                           href="#"
+                                           data-notification-id="{{ $notification->id }}">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1">
+                                                    <p class="mb-0">{{ $notification->message }}</p>
+                                                    <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            @else
+                                <li><a class="dropdown-item text-center" href="#">No notifications</a></li>
+                            @endif
+                        </ul>
+                    </div>
+                  @endif
 
                   {{-- Add Apply for Jobs Button if user_type is aspirant --}}
                   @if(auth()->user()->user_type === 'aspirant')
@@ -106,9 +148,7 @@ function showUnauthorizedMessage() {
 // Profile Picture Upload
 $("#profilePictureForm").submit(function(e) {
     e.preventDefault();
-    
     var formData = new FormData(this);
-    
     $.ajax({
         url: '{{ route("account.updateProfilePicture") }}',
         type: 'POST',
@@ -124,6 +164,40 @@ $("#profilePictureForm").submit(function(e) {
                     $("#image-error").html(errors.image[0]);
                 }
             }
+        }
+    });
+});
+
+// Aspirant notification: mark as read
+$(document).on('click', '.dropdown-item[data-notification-id]', function(e) {
+    var notificationId = $(this).data('notification-id');
+    if (notificationId) {
+        $.ajax({
+            url: '/account/notifications/' + notificationId + '/mark-as-read',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function() {
+                // Optionally update UI
+            }
+        });
+        $(this).removeClass('bg-light');
+    }
+});
+
+// Aspirant notification: mark all as read
+$(document).on('click', '#markAllAsReadAspirant', function(e) {
+    e.preventDefault();
+    $.ajax({
+        url: '/account/notifications/mark-all-as-read',
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function() {
+            $('.dropdown-item[data-notification-id]').removeClass('bg-light');
+            $('.badge.bg-danger').remove();
         }
     });
 });

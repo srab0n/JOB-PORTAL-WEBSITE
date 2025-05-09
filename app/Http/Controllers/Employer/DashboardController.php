@@ -144,4 +144,56 @@ class DashboardController extends Controller
 
         return redirect()->back()->with('success', 'All notifications marked as read');
     }
+
+    public function acceptApplicant(\App\Models\Applicant $applicant)
+    {
+        $this->authorizeAction($applicant);
+        $applicant->status = 'accepted';
+        $applicant->save();
+        \App\Models\Notification::create([
+            'user_id' => $applicant->user_id,
+            'job_id' => $applicant->job_id,
+            'applicant_id' => $applicant->applicant_id,
+            'message' => 'Your application has been accepted.',
+            'is_read' => false
+        ]);
+        return response()->json(['success' => true, 'message' => 'Applicant accepted.']);
+    }
+
+    public function rejectApplicant(\App\Models\Applicant $applicant)
+    {
+        $this->authorizeAction($applicant);
+        $applicant->status = 'rejected';
+        $applicant->save();
+        \App\Models\Notification::create([
+            'user_id' => $applicant->user_id,
+            'job_id' => $applicant->job_id,
+            'applicant_id' => $applicant->applicant_id,
+            'message' => 'Your application has been rejected.',
+            'is_read' => false
+        ]);
+        return response()->json(['success' => true, 'message' => 'Applicant rejected.']);
+    }
+
+    public function interviewApplicant(\App\Models\Applicant $applicant)
+    {
+        $this->authorizeAction($applicant);
+        $applicant->status = 'interview';
+        $applicant->save();
+        \App\Models\Notification::create([
+            'user_id' => $applicant->user_id,
+            'job_id' => $applicant->job_id,
+            'applicant_id' => $applicant->applicant_id,
+            'message' => 'You have been called for an interview.',
+            'is_read' => false
+        ]);
+        return response()->json(['success' => true, 'message' => 'Applicant called for interview.']);
+    }
+
+    private function authorizeAction($applicant)
+    {
+        if ($applicant->job->user_id !== auth()->id()) {
+            abort(403);
+        }
+    }
 } 

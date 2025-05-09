@@ -19,7 +19,8 @@ class Applicant extends Model
         'cgpa',
         'passing_year',
         'experience',
-        'applied_date'
+        'applied_date',
+        'status'
     ];
 
     protected $dates = [

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerController;
 use App\Http\Controllers\JobApplicationController;
+use App\Models\Applicant;
 
 // Home Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -67,6 +68,9 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/update-profile-picture', [AccountController::class, 'updateProfilePicture'])->name('account.updateProfilePicture');
         Route::put('/update-password', [AccountController::class, 'updatePassword'])->name('account.updatePassword');
         Route::delete('/delete-account', [AccountController::class, 'deleteAccount'])->name('account.deleteAccount');
+        // Notification routes for aspirant
+        Route::post('/notifications/{notification}/mark-as-read', [AccountController::class, 'markNotificationAsRead'])->name('account.notifications.markAsRead');
+        Route::post('/notifications/mark-all-as-read', [AccountController::class, 'markAllNotificationsAsRead'])->name('account.notifications.markAllAsRead');
         
         // Job-related routes with jobCreation middleware
         Route::group(['middleware' => 'jobCreation'], function () {
@@ -97,6 +101,11 @@ Route::middleware(['auth', 'employer'])->prefix('employer')->name('employer.')->
     // Notification Routes
     Route::post('/notifications/{notification}/mark-as-read', [EmployerDashboardController::class, 'markNotificationAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-as-read', [EmployerDashboardController::class, 'markAllNotificationsAsRead'])->name('notifications.markAllAsRead');
+
+    // Applicant Management Routes
+    Route::post('/applicants/{applicant:applicant_id}/accept', [EmployerDashboardController::class, 'acceptApplicant'])->name('applicants.accept');
+    Route::post('/applicants/{applicant:applicant_id}/reject', [EmployerDashboardController::class, 'rejectApplicant'])->name('applicants.reject');
+    Route::post('/applicants/{applicant:applicant_id}/interview', [EmployerDashboardController::class, 'interviewApplicant'])->name('applicants.interview');
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -59,7 +59,7 @@ class JobApplicationController extends Controller
                 'user_id' => $job->user_id, // The employer's user_id
                 'job_id' => $job->id,
                 'applicant_id' => $application->applicant_id,
-                'message' => 'New application received for job: ' . $job->title
+                'message' => 'New application received'
             ]);
 
             session()->flash('success', 'Application submitted successfully!');

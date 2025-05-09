@@ -21,6 +21,25 @@
         background-color: #f8f9fa;
         border-bottom: 1px solid #dee2e6;
     }
+    /* Notification dropdown fix */
+    .dropdown-menu[aria-labelledby="notificationDropdown"] {
+        max-width: 350px;
+        min-width: 300px;
+        word-break: break-word;
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+    .dropdown-item {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+    .dropdown-item .flex-grow-1,
+    .dropdown-item .flex-grow-1 p {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
 </style>
 @endsection
 

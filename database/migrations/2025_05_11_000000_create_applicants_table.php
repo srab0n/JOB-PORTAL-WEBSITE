@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('cgpa');
             $table->string('passing_year');
             $table->string('experience');
+            $table->string('status')->default('pending');
             $table->timestamp('applied_date')->useCurrent();
             $table->timestamps();
 

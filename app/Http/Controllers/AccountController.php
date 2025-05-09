@@ -101,7 +101,15 @@ class AccountController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        return view('front.account.profile', compact('user'));
+        // Fetch notifications for aspirant
+        $notifications = \App\Models\Notification::where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+        $unreadNotifications = \App\Models\Notification::where('user_id', $user->id)
+            ->where('is_read', false)
+            ->count();
+        return view('front.account.profile', compact('user', 'notifications', 'unreadNotifications'));
     }
 
     // Handle profile update
@@ -516,5 +524,22 @@ class AccountController extends Controller
             'status' => true,
             'code' => $code
         ]);
+    }
+
+    public function markNotificationAsRead(\App\Models\Notification $notification)
+    {
+        if ($notification->user_id !== Auth::id()) {
+            abort(403);
+        }
+        $notification->update(['is_read' => true]);
+        return response()->json(['success' => true]);
+    }
+
+    public function markAllNotificationsAsRead()
+    {
+        \App\Models\Notification::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+        return response()->json(['success' => true]);
     }
 }
