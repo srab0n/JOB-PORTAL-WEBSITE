@@ -25,12 +25,14 @@
                     <a href="{{ route('account.myJobs') }}">My Jobs</a>
                 </li>
             @endif
+            @if (Auth::check() && Auth::user()->user_type == 'aspirant')
             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                 <a href="{{ route('account.jobsApplied') }}">Jobs Applied</a>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                 <a href="saved-jobs.html">Saved Jobs</a>
             </li>
+            @endif
             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                 <a href="{{ route('account.logout') }}" style="font-weight: bold; color: #dc3545;">Logout</a>
             </li>
