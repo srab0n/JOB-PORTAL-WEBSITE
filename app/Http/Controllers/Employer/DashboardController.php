@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Employer;
 use App\Http\Controllers\Controller;
 use App\Models\Job;
 use App\Models\Employer;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +17,19 @@ class DashboardController extends Controller
         $employer = Employer::where('user_id', $user->id)->first();
         $jobs = Job::where('user_id', $user->id)->latest()->paginate(10);
         
-        return view('employer.dashboard', compact('employer', 'jobs'));
+        // Get notifications for the employer
+        $notifications = Notification::where('user_id', $user->id)
+            ->with(['job', 'applicant.user'])
+            ->latest()
+            ->take(5)
+            ->get();
+            
+        // Count unread notifications
+        $unreadNotifications = Notification::where('user_id', $user->id)
+            ->where('is_read', false)
+            ->count();
+        
+        return view('employer.dashboard', compact('employer', 'jobs', 'notifications', 'unreadNotifications'));
     }
 
     public function createJob()
@@ -111,5 +124,24 @@ class DashboardController extends Controller
         $applicants = $job->applicants()->with('user')->paginate(10);
 
         return view('employer.jobs.applicants', compact('job', 'applicants'));
+    }
+
+    public function markNotificationAsRead(Notification $notification)
+    {
+        if ($notification->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $notification->update(['is_read' => true]);
+        return response()->json(['success' => true]);
+    }
+
+    public function markAllNotificationsAsRead()
+    {
+        Notification::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return redirect()->back()->with('success', 'All notifications marked as read');
     }
 } 

@@ -22,6 +22,7 @@
             <div class="col-lg-9">
                 {{-- Include any flash messages --}}
                 @include('front.message')
+                @yield('content')
                 <div class="card shadow border-0">
                     <div class="card-body">
                         <h2>Admin Dashboard</h2>

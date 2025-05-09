@@ -8,7 +8,7 @@
 	<meta name="HandheldFriendly" content="True" />
 	<meta name="pinterest" content="nopin" />
 	<meta name="csrf-token" content="{{ csrf_token() }}">  {{-- ADDED TO DEAL WWITH CSRF  --}}
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}" />
     {{-- the above line sets the path for css --}}
 	<!-- Fav Icon -->
@@ -68,16 +68,17 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form id="profilePictureForm" enctype="multipart/form-data">
+            @csrf
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Profile Image</label>
-                <input type="file" class="form-control" id="image"  name="image">
+                <label for="image" class="form-label">Profile Image</label>
+                <input type="file" class="form-control" id="image" name="image">
+                <p class="text-danger" id="image-error"></p>
             </div>
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary mx-3">Update</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
-            
         </form>
       </div>
     </div>
@@ -101,6 +102,31 @@ function showUnauthorizedMessage() {
     event.preventDefault();
     alert('Only employers and administrators can post jobs. Please contact the administrator if you need this access.');
 }
+
+// Profile Picture Upload
+$("#profilePictureForm").submit(function(e) {
+    e.preventDefault();
+    
+    var formData = new FormData(this);
+    
+    $.ajax({
+        url: '{{ route("account.updateProfilePicture") }}',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.status == true) {
+                window.location.reload();
+            } else {
+                var errors = response.errors;
+                if (errors.image) {
+                    $("#image-error").html(errors.image[0]);
+                }
+            }
+        }
+    });
+});
 </script>
 
 @yield('customJs')

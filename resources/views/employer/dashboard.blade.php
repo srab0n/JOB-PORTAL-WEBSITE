@@ -1,5 +1,29 @@
 @extends('front.layouts.app')
 
+@section('customCss')
+<style>
+    .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1;
+        border-radius: 50%;
+    }
+    .dropdown-item.bg-light {
+        background-color: #f8f9fa !important;
+    }
+    .dropdown-item:hover {
+        background-color: #e9ecef !important;
+    }
+    .dropdown-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+</style>
+@endsection
+
 @section('main')
 <div class="container">
     <div class="row justify-content-center">
@@ -10,7 +34,46 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Employer Dashboard</h4>
-                    <a href="{{ route('account.createJob') }}" class="btn btn-primary">Post New Job</a>
+                    <div class="d-flex align-items-center">
+                        {{-- Notification Bell --}}
+                        <div class="dropdown me-3">
+                            <button class="btn btn-link position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell fa-lg"></i>
+                                @if($unreadNotifications > 0)
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {{ $unreadNotifications }}
+                                    </span>
+                                @endif
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="width: 300px;">
+                                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                    <span>Notifications</span>
+                                    @if($unreadNotifications > 0)
+                                        <a href="{{ route('employer.notifications.markAllAsRead') }}" class="text-decoration-none">
+                                            Mark all as read
+                                        </a>
+                                    @endif
+                                </li>
+                                @forelse($notifications as $notification)
+                                    <li>
+                                        <a class="dropdown-item {{ $notification->is_read ? '' : 'bg-light' }}" 
+                                           href="{{ route('employer.jobs.applicants', $notification->job) }}"
+                                           data-notification-id="{{ $notification->id }}">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1">
+                                                    <p class="mb-0">{{ $notification->message }}</p>
+                                                    <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                @empty
+                                    <li><a class="dropdown-item text-center" href="#">No notifications</a></li>
+                                @endforelse
+                            </ul>
+                        </div>
+                        <a href="{{ route('account.createJob') }}" class="btn btn-primary">Post New Job</a>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -148,6 +211,37 @@
             },
             error: function() {
                 alert('Error updating company information. Please try again.');
+            }
+        });
+    });
+
+    // Mark notification as read when clicked
+    document.querySelectorAll('.dropdown-item[data-notification-id]').forEach(item => {
+        item.addEventListener('click', function(e) {
+            const notificationId = this.dataset.notificationId;
+            if (notificationId) {
+                fetch(`/employer/notifications/${notificationId}/mark-as-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        // Remove the bg-light class to indicate it's read
+                        this.classList.remove('bg-light');
+                        // Update the unread count
+                        const badge = document.querySelector('.badge');
+                        if (badge) {
+                            const currentCount = parseInt(badge.textContent);
+                            if (currentCount > 1) {
+                                badge.textContent = currentCount - 1;
+                            } else {
+                                badge.remove();
+                            }
+                        }
+                    }
+                });
             }
         });
     });

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Job;
 use App\Models\Category;
 use App\Models\JobType;
+use App\Models\Applicant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -154,5 +155,11 @@ class AdminController extends Controller
                 'message' => 'Error deleting category: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function jobApplications()
+    {
+        $applications = Applicant::with(['user', 'job'])->orderByDesc('applied_date')->paginate(15);
+        return view('admin.job_applications', compact('applications'));
     }
 }

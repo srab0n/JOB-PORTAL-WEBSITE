@@ -37,6 +37,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'isAdmin']], functio
     Route::get('/manage-categories', [AdminController::class, 'manageCategories'])->name('admin.manage_categories');
     Route::post('/categories/store', [AdminController::class, 'storeCategory'])->name('admin.store_category');
     Route::delete('/categories/{category}', [AdminController::class, 'deleteCategory'])->name('admin.delete_category');
+
+    // New route for viewing all job applications submitted by users
+    Route::get('/job-applications', [AdminController::class, 'jobApplications'])->name('admin.job_applications');
 });
 
 // Account Routes
@@ -61,6 +64,7 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/profile', [AccountController::class, 'profile'])->name('account.profile');
         Route::get('/logout', [AccountController::class, 'logout'])->name('account.logout');
         Route::put('/update-profile', [AccountController::class, 'updateProfile'])->name('account.updateProfile');
+        Route::post('/update-profile-picture', [AccountController::class, 'updateProfilePicture'])->name('account.updateProfilePicture');
         Route::put('/update-password', [AccountController::class, 'updatePassword'])->name('account.updatePassword');
         Route::delete('/delete-account', [AccountController::class, 'deleteAccount'])->name('account.deleteAccount');
         
@@ -89,10 +93,18 @@ Route::middleware(['auth', 'employer'])->prefix('employer')->name('employer.')->
     Route::put('/jobs/{job}', [EmployerDashboardController::class, 'updateJob'])->name('jobs.update');
     Route::delete('/jobs/{job}', [EmployerDashboardController::class, 'deleteJob'])->name('jobs.delete');
     Route::get('/jobs/{job}/applicants', [EmployerDashboardController::class, 'viewApplicants'])->name('jobs.applicants');
+
+    // Notification Routes
+    Route::post('/notifications/{notification}/mark-as-read', [EmployerDashboardController::class, 'markNotificationAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [EmployerDashboardController::class, 'markAllNotificationsAsRead'])->name('notifications.markAllAsRead');
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/jobs/{job}/apply', [JobApplicationController::class, 'showApplicationForm'])->name('jobs.apply.form');
     Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply'])->name('jobs.apply');
     Route::get('/account/jobs-applied', [JobApplicationController::class, 'jobsApplied'])->name('account.jobsApplied');
+    // Saved jobs routes for aspirants
+    Route::post('/jobs/{job}/save', [JobApplicationController::class, 'saveJob'])->name('jobs.save');
+    Route::delete('/jobs/{job}/unsave', [JobApplicationController::class, 'unsaveJob'])->name('jobs.unsave');
+    Route::get('/account/saved-jobs', [JobApplicationController::class, 'savedJobs'])->name('account.savedJobs');
 });

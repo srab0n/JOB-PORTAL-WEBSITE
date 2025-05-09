@@ -19,4 +19,9 @@ class Job extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function applicants()
+    {
+        return $this->hasMany(\App\Models\Applicant::class, 'job_id');
+    }
 } 

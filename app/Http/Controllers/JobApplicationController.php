@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Applicant;
 use App\Models\Job;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -53,6 +54,14 @@ class JobApplicationController extends Controller
         ]);
 
         if ($application) {
+            // Create notification for the employer
+            Notification::create([
+                'user_id' => $job->user_id, // The employer's user_id
+                'job_id' => $job->id,
+                'applicant_id' => $application->applicant_id,
+                'message' => 'New application received for job: ' . $job->title
+            ]);
+
             session()->flash('success', 'Application submitted successfully!');
             return response()->json([
                 'status' => true,
@@ -74,5 +83,35 @@ class JobApplicationController extends Controller
             ->orderByDesc('applied_date')
             ->paginate(10);
         return view('front.account.job.jobs-applied', compact('applications'));
+    }
+
+    public function saveJob(Job $job)
+    {
+        $user = Auth::user();
+        if ($user->user_type !== 'aspirant') {
+            return redirect()->back()->with('error', 'Only aspirants can save jobs.');
+        }
+        $user->savedJobs()->syncWithoutDetaching([$job->id]);
+        return redirect()->back()->with('success', 'Job saved successfully.');
+    }
+
+    public function unsaveJob(Job $job)
+    {
+        $user = Auth::user();
+        if ($user->user_type !== 'aspirant') {
+            return redirect()->back()->with('error', 'Only aspirants can unsave jobs.');
+        }
+        $user->savedJobs()->detach($job->id);
+        return redirect()->back()->with('success', 'Job removed from saved jobs.');
+    }
+
+    public function savedJobs()
+    {
+        $user = Auth::user();
+        if ($user->user_type !== 'aspirant') {
+            abort(403);
+        }
+        $jobs = $user->savedJobs()->with('jobType', 'category')->paginate(10);
+        return view('front.account.job.saved-jobs', compact('jobs'));
     }
 } 

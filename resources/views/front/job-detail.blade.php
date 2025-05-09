@@ -16,7 +16,33 @@
         </div>
         <div class="row">
             <div class="col-lg-8">
-                <div class="card border-0 p-3 shadow mb-4">
+                <div class="card border-0 p-3 shadow mb-4 position-relative">
+                    @if(auth()->check() && auth()->user()->user_type === 'aspirant')
+                        @php $isSaved = auth()->user()->savedJobs->contains($job->id); @endphp
+                        <form action="{{ $isSaved ? route('jobs.unsave', $job->id) : route('jobs.save', $job->id) }}" method="POST" style="position:absolute; top:18px; right:18px; z-index:2;">
+                            @csrf
+                            @if($isSaved)
+                                @method('DELETE')
+                            @endif
+                            <button type="submit" style="background:none;border:none;padding:0;cursor:pointer;" title="{{ $isSaved ? 'Remove from Saved Jobs' : 'Save Job' }}">
+                                <span style="display:inline-block;width:38px;height:38px;">
+                                    @if($isSaved)
+                                    <!-- Filled Heart SVG -->
+                                    <svg viewBox="0 0 24 24" fill="#206a2c" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+                                        <title>Remove from Saved Jobs</title>
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                    @else
+                                    <!-- Outlined Heart SVG -->
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#206a2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+                                        <title>Save Job</title>
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                    @endif
+                                </span>
+                            </button>
+                        </form>
+                    @endif
                     <div class="card-body">
                         <h3 class="border-0 fs-5 pb-2 mb-0">{{ $job->title }}</h3>
                         
@@ -90,9 +116,9 @@
                             <p><strong>Location:</strong> {{ $job->company_location ?? 'Not set' }}</p>
                         </div>
 
-                        @if(auth()->check() && !auth()->user()->is_admin)
+                        @if(auth()->check() && auth()->user()->user_type === 'aspirant')
                             <div class="d-grid mt-4">
-                                <a href="{{ route('jobs.apply.form', $job->id) }}" class="btn btn-primary btn-lg">Apply Now</a>
+                                <a href="{{ route('jobs.apply.form', $job->id) }}" class="btn btn-primary btn-lg mb-2">Apply Now</a>
                             </div>
                         @elseif(!auth()->check())
                             <div class="d-grid mt-4">

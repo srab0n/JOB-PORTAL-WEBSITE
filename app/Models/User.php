@@ -56,6 +56,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the saved jobs for the user.
+     */
+    public function savedJobs()
+    {
+        return $this->belongsToMany(Job::class, 'saved_jobs', 'user_id', 'job_id')->withTimestamps();
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot()

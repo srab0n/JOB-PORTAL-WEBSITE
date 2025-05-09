@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\JobType;
 use App\Models\Job;
 use App\Models\Employer;
+use Illuminate\Support\Facades\Storage;
 
 class AccountController extends Controller
 {
@@ -157,16 +158,16 @@ class AccountController extends Controller
         $user = Auth::user();
 
         // Delete old image if exists
-        if ($user->image && file_exists(public_path('profile/' . $user->image))) {
-            unlink(public_path('profile/' . $user->image));
+        if ($user->image) {
+            Storage::disk('public')->delete('profile/' . $user->image);
         }
 
         // Upload new image
         $image = $request->file('image');
         $imageName = time() . '.' . $image->getClientOriginalExtension();
         
-        // Move the image to public/profile directory
-        $image->move(public_path('profile'), $imageName);
+        // Store the image in storage/app/public/profile
+        $image->storeAs('profile', $imageName, 'public');
 
         // Update user profile
         $user->image = $imageName;
