@@ -72,110 +72,41 @@
         }
     });
 
-    $("#registrationForm").submit(function(e){
+    $("#registrationForm").submit(function(e) {
         e.preventDefault();
+
         $.ajax({
             url: '{{ route("account.processRegistration") }}',
             type: 'post',
-            data: $("#registrationForm").serialize(),
+            data: $(this).serialize(),
             dataType: 'json',
-            success: function (response) {
-                if (response.status === false) {
+            success: function(response) {
+                if (response.status == true) {
+                    $("#registrationForm").find('p.invalid-feedback').remove();
+                    $("#registrationForm").find('.is-invalid').removeClass('is-invalid');
+                    
+                    // Show success message
+                    $('.alert-success').remove();
+                    $("#registrationForm").before('<div class="alert alert-success">' + response.message + '</div>');
+                    
+                    // Clear the form
+                    $("#registrationForm")[0].reset();
+                    
+                    // Redirect to login page after a short delay
+                    setTimeout(function() {
+                        window.location.href = '{{ route('account.login') }}';
+                    }, 2000);
+                    
+                } else {
                     var errors = response.errors;
                     
-                    // Handle name errors
-                    if (errors.name) {
-                        $("#name").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.name);
-                    } else {
-                        $("#name").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    // Handle email errors
-                    if (errors.email) {
-                        $("#email").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.email);
-                    } else {
-                        $("#email").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    // Handle password errors
-                    if (errors.password) {
-                        $("#password").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.password);
-                    } else {
-                        $("#password").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    // Handle confirm password errors
-                    if (errors.confirm_password) {
-                        $("#confirm_password").addClass('is-invalid')
-                            .siblings('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.confirm_password);
-                    } else {
-                        $("#confirm_password").removeClass('is-invalid')
-                            .siblings('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                    // Handle user type errors
-                    if (errors.user_type) {
-                        $("input[name='user_type']").addClass('is-invalid')
-                            .closest('.mb-3')
-                            .find('p')
-                            .addClass('invalid-feedback')
-                            .html(errors.user_type);
-                    } else {
-                        $("input[name='user_type']").removeClass('is-invalid')
-                            .closest('.mb-3')
-                            .find('p')
-                            .removeClass('invalid-feedback')
-                            .html('');
-                    }
-
-                } else {
-                    // SUCCESS: Clear errors + reset form
-                    $("#registrationForm")[0].reset();
-
-                    $("#name").removeClass('is-invalid')
-                        .siblings('p')
-                        .removeClass('invalid-feedback')
-                        .html('');
-
-                    $("#email").removeClass('is-invalid')
-                        .siblings('p')
-                        .removeClass('invalid-feedback')
-                        .html('');
-
-                    $("#password").removeClass('is-invalid')
-                        .siblings('p')
-                        .removeClass('invalid-feedback')
-                        .html('');
-
-                    $("#confirm_password").removeClass('is-invalid')
-                        .siblings('p')
-                        .removeClass('invalid-feedback')
-                        .html('');
-
-                    alert('Registration successful!');
-                    window.location.href = "{{ route('account.login') }}";
+                    $("#registrationForm").find('p.invalid-feedback').remove();
+                    $("#registrationForm").find('.is-invalid').removeClass('is-invalid');
+                    
+                    $.each(errors, function(key, value) {
+                        $('#' + key).addClass('is-invalid')
+                            .after('<p class="invalid-feedback">' + value + '</p>');
+                    });
                 }
             }
         });

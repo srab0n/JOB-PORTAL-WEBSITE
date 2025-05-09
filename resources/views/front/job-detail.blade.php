@@ -37,7 +37,15 @@
                                 <div class="col-md-6">
                                     <p class="mb-0">
                                         <span class="fw-bolder">৳</span>
-                                        <span class="ps-1">{{ number_format($job->salary) }}</span>
+                                        <span class="ps-1">
+                                            @if(is_numeric($job->salary))
+                                                {{ number_format((float)$job->salary) }}
+                                            @elseif(!empty($job->salary))
+                                                {{ $job->salary }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </span>
                                     </p>
                                 </div>
                                 <div class="col-md-6">
@@ -84,7 +92,7 @@
 
                         @if(auth()->check() && !auth()->user()->is_admin)
                             <div class="d-grid mt-4">
-                                <a href="#" class="btn btn-primary btn-lg">Apply Now</a>
+                                <a href="{{ route('jobs.apply.form', $job->id) }}" class="btn btn-primary btn-lg">Apply Now</a>
                             </div>
                         @elseif(!auth()->check())
                             <div class="d-grid mt-4">

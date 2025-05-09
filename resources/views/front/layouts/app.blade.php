@@ -43,6 +43,11 @@
 				  @if(auth()->user()->user_type === 'employer')
 					<a href="{{ route('employer.dashboard') }}" class="btn btn-info me-2">Employer</a>
 				  @endif
+
+                  {{-- Add Apply for Jobs Button if user_type is aspirant --}}
+                  @if(auth()->user()->user_type === 'aspirant')
+                    <a href="{{ route('jobs') }}" class="btn btn-success me-2">Apply for Jobs</a>
+                  @endif
                 @endif
 
                 @if (Auth::check() && in_array(Auth::user()->user_type, ['admin', 'employer']))

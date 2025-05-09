@@ -8,6 +8,7 @@ use App\Http\Controllers\JobsController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerController;
+use App\Http\Controllers\JobApplicationController;
 
 // Home Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -88,4 +89,10 @@ Route::middleware(['auth', 'employer'])->prefix('employer')->name('employer.')->
     Route::put('/jobs/{job}', [EmployerDashboardController::class, 'updateJob'])->name('jobs.update');
     Route::delete('/jobs/{job}', [EmployerDashboardController::class, 'deleteJob'])->name('jobs.delete');
     Route::get('/jobs/{job}/applicants', [EmployerDashboardController::class, 'viewApplicants'])->name('jobs.applicants');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/jobs/{job}/apply', [JobApplicationController::class, 'showApplicationForm'])->name('jobs.apply.form');
+    Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply'])->name('jobs.apply');
+    Route::get('/account/jobs-applied', [JobApplicationController::class, 'jobsApplied'])->name('account.jobsApplied');
 });

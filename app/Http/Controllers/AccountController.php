@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use App\Models\JobType;
 use App\Models\Job;
+use App\Models\Employer;
 
 class AccountController extends Controller
 {
@@ -44,11 +45,20 @@ class AccountController extends Controller
         $user->user_type = $request->user_type;
         $user->save();
 
-        session()->flash('success', 'You have registered successfully.');
+        // Create employer record if user type is employer
+        if ($request->user_type === 'employer') {
+            $employer = new Employer();
+            $employer->user_id = $user->id;
+            $employer->company_name = ''; // This will be updated later in the employer dashboard
+            $employer->save();
+        }
+
+        session()->flash('success', 'Registration successful! Please login to continue.');
 
         return response()->json([
             'status' => true,
-            'message' => 'You have registered successfully.'
+            'message' => 'Registration successful! Please login to continue.',
+            'redirect' => route('account.login')
         ]);
     }
 
