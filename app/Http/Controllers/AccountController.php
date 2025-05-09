@@ -369,4 +369,104 @@ class AccountController extends Controller
             'message' => 'Account deleted successfully'
         ]);
     }
+
+    public function showForgetPassword()
+    {
+        return view('front.account.forget-password');
+    }
+
+    public function verifyCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'code' => 'required|digits:4'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        // In a real application, you would verify the code from the database
+        // For this demo, we'll just check if the code matches the one shown
+        if ($request->code !== strval(session('reset_code'))) {
+            return response()->json([
+                'status' => false,
+                'errors' => ['code' => ['Invalid verification code']]
+            ]);
+        }
+
+        // Store email in session for password reset (already set in generateResetCode)
+        // session(['reset_email' => $request->email]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Code verified successfully'
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|min:5|confirmed',
+            'password_confirmation' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        $email = session('reset_email');
+        if (!$email) {
+            return response()->json([
+                'status' => false,
+                'errors' => ['email' => ['Session expired. Please try again.']]
+            ]);
+        }
+
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'errors' => ['email' => ['User not found']]
+            ]);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Clear the session
+        session()->forget(['reset_code', 'reset_email']);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Password reset successfully'
+        ]);
+    }
+
+    public function generateResetCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        $code = rand(1000, 9999);
+        session(['reset_code' => $code, 'reset_email' => $request->email]);
+
+        return response()->json([
+            'status' => true,
+            'code' => $code
+        ]);
+    }
 }
